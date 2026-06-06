@@ -1,0 +1,35 @@
+{
+  "name": "planfi",
+  "owner": {
+    "name": "holdequity",
+    "url": "https://github.com/holdequity"
+  },
+  "metadata": {
+    "description": "planfi skills — financial planning and real-estate investment analysis powered by the public planfi MCP.",
+    "version": "1.0.2"
+  },
+  "plugins": [
+    {
+      "name": "str-investment-analyzer",
+      "source": "./skills/str-investment-analyzer",
+      "description": "Analyze short-term-rental (Airbnb/VRBO) property investments by city: cash flow, cash-on-cash, cap rate, break-even occupancy, and a hold-period return for the horizon you pick. Thin orchestration over the planfi MCP.",
+      "version": "1.0.2",
+      "license": "MIT",
+      "author": {
+        "name": "holdequity",
+        "url": "https://github.com/holdequity"
+      }
+    },
+    {
+      "name": "financial-forecast",
+      "source": "./skills/financial-forecast",
+      "description": "Build a complete FIRE / financial forecast: net-worth projection, FIRE age, Monte Carlo success rate, insights, action plan, and what-if scenario comparisons. Thin orchestration over the planfi MCP.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "author": {
+        "name": "holdequity",
+        "url": "https://github.com/holdequity"
+      }
+    }
+  ]
+}
