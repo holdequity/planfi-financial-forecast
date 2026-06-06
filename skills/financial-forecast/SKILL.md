@@ -1,6 +1,6 @@
 ---
 name: financial-forecast
-version: 1.0.0
+version: 1.1.0
 description: Build a complete FIRE / financial forecast for a household by orchestrating the public planfi MCP. Use whenever someone wants a financial plan, FIRE projection, retirement forecast, net-worth projection, "when can I retire", "am I on track", or wants to model savings / retirement-age / spending trade-offs — e.g. "build me a financial plan, I'm 34 making $180k with $250k invested", "when can I retire if I save $4k/mo?", "am I on track to retire at 55?".
 ---
 
@@ -34,11 +34,11 @@ claude mcp add --transport http planfi https://ai.planfi.app/mcp
 1. **Each earner's age + annual salary** (household, 1–4 earners).
 2. **Stock / investment portfolio**: `current_value` + `monthly_contribution`.
 
-**ALWAYS ASK — do NOT silently default (these dominate the forecast):**
-- **Target retirement age** — the server defaults to `65`. Never let that pass silently; if the
-  user has no preference, say you assumed 65.
-- **Desired annual spend in retirement** (today's dollars) — defaults to `50000`. Confirm it; this
-  IS the FIRE-number driver.
+**Forecast-driving inputs you may not have (retirement age, desired spend, SWR, returns, inflation):**
+gather them if the conversation makes it natural, but you don't have to chase them down. Anything you
+omit is defaulted server-side and reported back in **`assumed_defaults[]`** (each with `field`,
+`assumed_value`, `note`). Surface those so the user can correct any silent assumption (see Step 6) —
+the server is the source of truth for what was assumed; don't track defaults yourself.
 
 **ASK ONLY IF VOLUNTEERED / RELEVANT (sensible server defaults exist):**
 `cash` (value + monthly + APY 0.04), `real_estate[]` (+ `mortgage`), `debts[]`,
@@ -129,8 +129,9 @@ Use **`get_financial_definitions`** when the user asks what a term means.
   the honest risk check. Offer the `share_url`.
 - If the user gave a **target retirement age**, frame everything against it ("on track / N years
   short") and surface `solve_goal` levers.
-- **Be explicit about assumptions** — especially any server defaults you fell back on (retirement age
-  65, spend 50000, SWR 0.04, 7% real return, 3% inflation). State them plainly so the user can correct.
+- **Surface `assumed_defaults[]`** from the plan response — read back each assumed `field` +
+  `assumed_value` + `note` so the user can correct any silent assumption. The server reports exactly
+  what it defaulted; don't enumerate defaults from memory.
 - If the **backtesting failure rate is elevated** or the withdrawal rate is aggressive, say so up
   front — do not bury it.
 

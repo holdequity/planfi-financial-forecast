@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "planfi skills — financial planning and real-estate investment analysis powered by the public planfi MCP.",
-    "version": "1.0.2"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "financial-forecast",
       "source": "./skills/financial-forecast",
       "description": "Build a complete FIRE / financial forecast: net-worth projection, FIRE age, Monte Carlo success rate, insights, action plan, and what-if scenario comparisons. Thin orchestration over the planfi MCP.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "license": "MIT",
       "author": {
         "name": "holdequity",
