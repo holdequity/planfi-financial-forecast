@@ -119,7 +119,9 @@ Only invoke when the user's question maps to one: **`analyze_roth_conversion`**,
 **`analyze_withdrawal_strategy`** (RMD-aware decumulation), **`analyze_healthcare_bridge`** (pre-65
 ACA gap), **`analyze_funding_waterfall`** ("next best dollar" for surplus), **`analyze_refinance`**,
 **`optimize_social_security`**, **`analyze_mortgage_prepay`**, **`analyze_debt_payoff`**,
-**`analyze_fire_number`**, etc. Each accepts `plan_id` plus a few specific fields.
+**`analyze_fire_number`**, **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
+both ways, opportunity cost, and the break-even home-appreciation rate, fully tax- and
+inflation-adjusted), etc. Each accepts `plan_id` plus a few specific fields.
 Use **`get_financial_definitions`** when the user asks what a term means.
 
 ## Step 6 — Present the forecast
