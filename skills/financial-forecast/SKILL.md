@@ -53,9 +53,12 @@ analyses), `retirement_accounts` (401k / IRA / HSA contributions + employer matc
   (optionally pre-fill `partial_data` { earner_age, earner_name, plan_name }) → it returns
   `{ session_id, form_url }`. Share the `form_url`. Then retrieve results with
   **`wait_for_completion({ session_id })`** (server-side long-poll, ~25s; returns `complete` with the
-  plan + `plan_id`, or `pending` + `retry_after_seconds` — call again to keep waiting). The single-shot
-  non-blocking alternative is **`get_completed_plan({ session_id })`**. Honor `retry_after_seconds`;
-  never blind-loop. The intake path's handle is `session_id`; the chaining handle is `plan_id`.
+  plan — `markdown` + `share_url` + `summary` — or `pending` + `retry_after_seconds` — call again to
+  keep waiting). The single-shot non-blocking alternative is **`get_completed_plan({ session_id })`**,
+  which additionally returns a reusable **`plan_id`** for chaining (it may be `null` for older
+  sessions — fall back to re-sending the model). Honor `retry_after_seconds`; never blind-loop. The
+  intake path's handle is `session_id`; to get a `plan_id` for downstream tools, finish with
+  `get_completed_plan`.
 
 **Optional kickoff to decide what to ask:** **`check_model_completeness`** (0–100 score + highest-impact
 missing fields) and/or **`explain_plan_state`** (ready / blocked / n-a analyses with `missing_fields`).
@@ -119,9 +122,12 @@ Only invoke when the user's question maps to one: **`analyze_roth_conversion`**,
 **`analyze_withdrawal_strategy`** (RMD-aware decumulation), **`analyze_healthcare_bridge`** (pre-65
 ACA gap), **`analyze_funding_waterfall`** ("next best dollar" for surplus), **`analyze_refinance`**,
 **`optimize_social_security`**, **`analyze_mortgage_prepay`**, **`analyze_debt_payoff`**,
-**`analyze_fire_number`**, **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
+**`analyze_fire_number`** (takes only `desired_annual_spend` + `safe_withdrawal_rate` — no `plan_id`;
+elicits either if missing), **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
 both ways, opportunity cost, and the break-even home-appreciation rate, fully tax- and
-inflation-adjusted), etc. Each accepts `plan_id` plus a few specific fields.
+inflation-adjusted; accepts `plan_id` to derive the cap-gains rate, or `magi` + `filing_status`).
+Most accept `plan_id` plus a few specific fields, but a few (e.g. `analyze_fire_number`) take only
+raw inputs — check each tool's schema.
 Use **`get_financial_definitions`** when the user asks what a term means.
 
 ## Step 6 — Present the forecast

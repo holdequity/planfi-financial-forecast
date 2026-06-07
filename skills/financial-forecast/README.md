@@ -112,9 +112,12 @@ See `SKILL.md` for the full instructions, exact tool params, and output format.
 - All decimals are fractions (7% → `0.07`); all figures are today's (real, inflation-adjusted)
   dollars; the stock `annual_return` is a real rate (default 0.07).
 - Backtesting uses historical Shiller returns; its `annual_return` argument is ignored.
-- The skill is explicit about any default it falls back on (retirement age 65, spend 50000, SWR
-  0.04, 7% real return, 3% inflation) so you can correct it. If the failure rate is elevated, it
-  says so up front.
+- Any forecast-driving input you omit is defaulted server-side and reported back in the tool's
+  `assumed_defaults[]` array (each `{ field, assumed_value, note }` — e.g. retirement age 65, spend
+  50000, SWR 0.04, 7% real return, 3% inflation). The skill reads those back to you from the
+  response so you can correct any silent assumption; it does not track defaults itself. (These are
+  separate from the static `disclosures.key_assumptions` prose and the `disclosures.not_advice`
+  boolean.) If the failure rate is elevated, it says so up front.
 - Not financial advice. Planning estimates only (approximate 2026 brackets/limits where tax tools
   apply).
 
