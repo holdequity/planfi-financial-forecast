@@ -130,7 +130,14 @@ tradeoff; pairs with `analyze_childcare_cost`), **`analyze_529_optimization`**
 (model a $35k 529→Roth rollover (SECURE 2.0, no MAGI phaseout) + a 5-year gift-tax-averaged
 superfunding election — the "what if my kid doesn't need it all" + HNW education/estate move; pairs
 with `analyze_education_account` and `analyze_estate_exposure`), **`analyze_estate_exposure`**
-(estate-tax exposure; the superfunding gift removes assets from the taxable estate),
+(estate-tax exposure; the superfunding gift removes assets from the taxable estate. Shared engine
+`estate-tax-calculator.ts` now models BOTH the 6 state **inheritance** taxes — PA/NJ/KY/IA/MD/NE,
+which hit beneficiaries by relationship class (`spouse`/`lineal`/`sibling`/`other`) regardless of
+estate size, so a PA/NJ household no longer gets a wrong $0 — AND broadened **estate**-tax-state
+coverage of ~12 states (MA/NY/OR/WA + CT/DC/HI/IL/ME/MD/MN/RI/VT; MD double-hits with both). Pass
+`beneficiary_relationship` (default `lineal`); `spouse` is exempt everywhere. Example PA/NJ question:
+*"We're a PA family with $1M — how much inheritance tax will our kids owe?"* → lineal heirs owe
+4.5%, i.e. ~$45,000. The same engine backs the **`relocation-planner`** skill's state-tax arbitrage),
 **`analyze_fire_number`** (takes only `desired_annual_spend` + `safe_withdrawal_rate` — no `plan_id`;
 elicits either if missing), **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
 both ways, opportunity cost, and the break-even home-appreciation rate, fully tax- and

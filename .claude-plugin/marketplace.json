@@ -12,7 +12,7 @@
     {
       "name": "financial-forecast",
       "source": "./skills/financial-forecast",
-      "description": "Build a complete FIRE / financial forecast: net-worth projection, FIRE age, Monte Carlo success rate, insights, action plan, what-if scenario comparisons, childcare cost + dependent-care FSA / Child & Dependent Care Credit / Child Tax Credit offsets with a corrected second-income tradeoff, and education/estate deep-dives including a 529→Roth rollover (SECURE 2.0) + 5-year gift-tax-averaged 529 superfunding optimizer. Thin orchestration over the planfi MCP.",
+      "description": "Build a complete FIRE / financial forecast: net-worth projection, FIRE age, Monte Carlo success rate, insights, action plan, what-if scenario comparisons, childcare cost + dependent-care FSA / Child & Dependent Care Credit / Child Tax Credit offsets with a corrected second-income tradeoff, and education/estate deep-dives including a 529→Roth rollover (SECURE 2.0) + 5-year gift-tax-averaged 529 superfunding optimizer, plus estate- and inheritance-tax exposure covering the 6 inheritance-tax states (PA/NJ/KY/IA/MD/NE, taxed by beneficiary relationship class regardless of estate size) and ~12 estate-tax states (MA/NY/OR/WA + CT/DC/HI/IL/ME/MD/MN/RI/VT). Thin orchestration over the planfi MCP.",
       "version": "1.2.0",
       "license": "MIT",
       "author": {
