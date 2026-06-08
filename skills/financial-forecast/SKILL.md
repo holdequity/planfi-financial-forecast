@@ -1,6 +1,6 @@
 ---
 name: financial-forecast
-version: 1.1.0
+version: 1.2.0
 description: Build a complete FIRE / financial forecast for a household by orchestrating the public planfi MCP. Use whenever someone wants a financial plan, FIRE projection, retirement forecast, net-worth projection, "when can I retire", "am I on track", or wants to model savings / retirement-age / spending trade-offs — e.g. "build me a financial plan, I'm 34 making $180k with $250k invested", "when can I retire if I save $4k/mo?", "am I on track to retire at 55?".
 ---
 
@@ -122,6 +122,11 @@ Only invoke when the user's question maps to one: **`analyze_roth_conversion`**,
 **`analyze_withdrawal_strategy`** (RMD-aware decumulation), **`analyze_healthcare_bridge`** (pre-65
 ACA gap), **`analyze_funding_waterfall`** ("next best dollar" for surplus), **`analyze_refinance`**,
 **`optimize_social_security`**, **`analyze_mortgage_prepay`**, **`analyze_debt_payoff`**,
+**`analyze_education_account`** (529 / Coverdell college funding gap), **`analyze_529_optimization`**
+(model a $35k 529→Roth rollover (SECURE 2.0, no MAGI phaseout) + a 5-year gift-tax-averaged
+superfunding election — the "what if my kid doesn't need it all" + HNW education/estate move; pairs
+with `analyze_education_account` and `analyze_estate_exposure`), **`analyze_estate_exposure`**
+(estate-tax exposure; the superfunding gift removes assets from the taxable estate),
 **`analyze_fire_number`** (takes only `desired_annual_spend` + `safe_withdrawal_rate` — no `plan_id`;
 elicits either if missing), **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
 both ways, opportunity cost, and the break-even home-appreciation rate, fully tax- and

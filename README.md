@@ -29,7 +29,9 @@ The skill calls these planfi MCP tools, served from `https://ai.planfi.app/mcp` 
   **`explain_plan_state`** — sensitivity, allocation, and completeness helpers.
 - Optional deep-dives: **`analyze_roth_conversion`**, **`analyze_withdrawal_strategy`**,
   **`analyze_healthcare_bridge`**, **`analyze_funding_waterfall`**, **`analyze_refinance`**,
-  **`optimize_social_security`**, and more.
+  **`optimize_social_security`**, **`analyze_education_account`**, **`analyze_529_optimization`**
+  (model a $35k 529→Roth rollover (SECURE 2.0) + 5-year gift-tax-averaged superfunding; pairs with
+  `analyze_estate_exposure`), and more.
 
 Only two areas are strictly required to forecast: each earner's **age + annual salary**, and your
 **stock/investment portfolio** (`current_value` + `monthly_contribution`). Everything else has
