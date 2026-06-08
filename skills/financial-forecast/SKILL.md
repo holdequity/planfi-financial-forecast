@@ -122,7 +122,11 @@ Only invoke when the user's question maps to one: **`analyze_roth_conversion`**,
 **`analyze_withdrawal_strategy`** (RMD-aware decumulation), **`analyze_healthcare_bridge`** (pre-65
 ACA gap), **`analyze_funding_waterfall`** ("next best dollar" for surplus), **`analyze_refinance`**,
 **`optimize_social_security`**, **`analyze_mortgage_prepay`**, **`analyze_debt_payoff`**,
-**`analyze_education_account`** (529 / Coverdell college funding gap), **`analyze_529_optimization`**
+**`analyze_education_account`** (529 / Coverdell college funding gap),
+**`analyze_childcare_cost`** (childcare cost + second-income tradeoff),
+**`analyze_childcare_tax_offsets`** (layers the dependent-care FSA + Child & Dependent Care Credit /
+Child Tax Credit onto projected childcare to show net-of-offset cost and a corrected second-income
+tradeoff; pairs with `analyze_childcare_cost`), **`analyze_529_optimization`**
 (model a $35k 529→Roth rollover (SECURE 2.0, no MAGI phaseout) + a 5-year gift-tax-averaged
 superfunding election — the "what if my kid doesn't need it all" + HNW education/estate move; pairs
 with `analyze_education_account` and `analyze_estate_exposure`), **`analyze_estate_exposure`**
