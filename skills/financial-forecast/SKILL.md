@@ -179,6 +179,10 @@ rather than guessing the next call.
 - All decimals are fractions; all dollars are today's (real) dollars; stock return is real.
 - Reuse the `plan_id` across the whole session — never re-send the full model.
 - Backtesting uses historical Shiller returns; its `annual_return` arg is ignored.
+- This skill is the **FIRE-only deep dive** (savings / retirement-age / spend trade-offs, goal-solving,
+  scenario comparison). When the user wants **one comprehensive document** spanning retirement +
+  529 college funding + estate-tax exposure + insurance/protection gaps, use the
+  **`comprehensive-plan`** skill (its `assemble_comprehensive_plan` orchestrator) — the broad superset.
 - If income is from self-employment or a business, the **`self-employed-planner`** skill computes the
   tax-advantaged contribution (Solo 401(k) / SEP / SIMPLE) + QBI deduction to fold into this forecast.
 - Not financial advice. Planning estimates only (approximate 2026 brackets/limits where tax tools apply).
