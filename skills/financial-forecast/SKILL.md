@@ -171,6 +171,31 @@ Cross-link: pairs with **`analyze_529_optimization`** (the carve-out coordinates
 distributions / rollover) and **`analyze_advanced_taxes`** (for MAGI and marginal-rate context that
 drives the phase-out).
 
+### "what's my EFC / SAI" / "FAFSA Student Aid Index estimate" / "how much college financial aid will I get" / "will my kid qualify for need-based aid" / "does a grandparent-owned 529 hurt aid" / "how much does a Roth conversion raise my EFC" / "should I move money out of my kid's name for FAFSA" → `analyze_college_aid_efc`
+
+**Always CALL `analyze_college_aid_efc` for these — do not answer from general knowledge or quote
+FAFSA allowances, the 5.64% asset rate, the 22-47% income schedule, the auto-zero/simplified-needs
+thresholds, or the student 20%/50% rates from memory.** When the user gives parent income/assets and
+student numbers, run it and lead with its real output (the computed SAI, the parent-income /
+parent-asset / student components, and the planning-lever sensitivities). The server is the source of
+truth for the 2026-27 income-protection and asset-protection allowance tables, the employment-expense
+and FICA allowances, the AAI rate schedule, and the auto-zero / simplified-needs cutoffs — never
+recite these from memory.
+
+Trigger condition: the user is a parent or grandparent of a college-bound student asking how much
+need-based aid eligibility they'll have, or how a planning move changes it — parent- vs
+grandparent-owned 529s, holding money as a reportable asset vs realizing base-year income (Roth
+conversions, capital gains), or whether retirement-account / home-equity exclusions help. Pass
+`parent_income`, `parent_assets`, `household_size`, `number_in_college`, `student_income`,
+`student_assets`, `ownership529`, `age_of_older_parent`, and `eligible_means_tested` — or a `plan_id`
+to derive the household income/assets. It returns the computed SAI, each contribution component, the
+allowances applied, the simplified-needs / auto-zero status, the 529-ownership note, and the marginal
+SAI cost of `$10k` of base-year income vs `$10k` of reportable assets.
+
+Cross-link: pairs with **`analyze_529_optimization`** (shift/superfund assets to lower the assessed
+SAI; grandparent-owned 529s are no longer counted post-2024) and **`analyze_education_credits`** (the
+in-college years where the AOTC/LLC and the 529 carve-out apply).
+
 ## Step 6 — Present the forecast
 
 - **Lead with the headline:** FIRE age / years-to-FIRE / FIRE% / FIRE number / projected net worth at
