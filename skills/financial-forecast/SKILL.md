@@ -196,6 +196,31 @@ Cross-link: pairs with **`analyze_529_optimization`** (shift/superfund assets to
 SAI; grandparent-owned 529s are no longer counted post-2024) and **`analyze_education_credits`** (the
 in-college years where the AOTC/LLC and the 529 carve-out apply).
 
+### "kiddie tax on my kid's dividends/interest" / "gift appreciated stock to my child for 0% capital gains" / "UTMA vs 529 for financial aid" / "how much can I gift my kid tax-free this year" / "custodial account tax on my child" / "should I fund a UTMA or a 529" → `analyze_kiddie_tax`
+
+**Always CALL `analyze_kiddie_tax` for these — do not answer from general knowledge or quote rules of
+thumb from memory.** When the user gives the numbers, run it and lead with its real output (the child's
+kiddie-tax liability by income tier, the appreciated-stock-gifting family tax saved, the FAFSA
+asset-treatment penalty of UTMA vs 529, the annual gift-exclusion headroom, and the recommended funding
+structure). The server is the source of truth for the IRC §1(g) kiddie-tax tier thresholds (the
+tax-free / child-rate / parent-rate bands), the child's 0% long-term-capital-gains band, the FAFSA
+20% student vs 5.64% parent asset assessment rates, and the annual gift-exclusion amount — never recite
+these from memory.
+
+Trigger condition: a parent funding a child's college via a custodial (UTMA/UGMA) account, gifting
+appreciated stock to a low-income child to harvest gains in the 0% LTCG bracket, weighing UTMA vs 529
+for financial-aid impact, or asking how much they can gift tax-free this year. Pass
+`childUnearnedIncome` (dividends/interest/cap-gains), `childEarnedIncome`, `childOtherTaxableIncome`,
+`appreciatedStockGifted` + `appreciatedStockBasis`, `custodialAccountBalance`, and `giftsAlreadyMade`,
+plus the parent's `filingStatus` and `parentTaxableIncome` — or a `plan_id` to derive the parent's
+filing status and marginal rate. It returns the kiddie-tax liability split across the three tiers, the
+family tax saved by gifting appreciated stock vs the parent selling, the UTMA-vs-529 FAFSA aid penalty,
+the remaining gift-exclusion headroom, and a single deterministic funding recommendation.
+
+Cross-link: pairs with **`analyze_529_optimization`** (the 529 alternative to a custodial account, and
+superfunding via the gift exclusion) and **`analyze_college_aid_efc`** (the UTMA-as-student-asset 20%
+assessment that drives the FAFSA penalty this tool quantifies).
+
 ## Step 6 — Present the forecast
 
 - **Lead with the headline:** FIRE age / years-to-FIRE / FIRE% / FIRE number / projected net worth at
