@@ -129,7 +129,10 @@ Child Tax Credit onto projected childcare to show net-of-offset cost and a corre
 tradeoff; pairs with `analyze_childcare_cost`), **`analyze_529_optimization`**
 (model a $35k 529→Roth rollover (SECURE 2.0, no MAGI phaseout) + a 5-year gift-tax-averaged
 superfunding election — the "what if my kid doesn't need it all" + HNW education/estate move; pairs
-with `analyze_education_account` and `analyze_estate_exposure`), **`analyze_estate_exposure`**
+with `analyze_education_account` and `analyze_estate_exposure`),
+**`analyze_education_credits`** (federal education **tax credits** — AOTC vs Lifetime Learning
+Credit per student, MAGI phase-out, refundable/non-refundable split, and the $4k 529 carve-out to
+preserve full AOTC; see the dedicated trigger section below), **`analyze_estate_exposure`**
 (estate-tax exposure; the superfunding gift removes assets from the taxable estate. Shared engine
 `estate-tax-calculator.ts` now models BOTH the 6 state **inheritance** taxes — PA/NJ/KY/IA/MD/NE,
 which hit beneficiaries by relationship class (`spouse`/`lineal`/`sibling`/`other`) regardless of
@@ -145,6 +148,28 @@ inflation-adjusted; accepts `plan_id` to derive the cap-gains rate, or `magi` + 
 Most accept `plan_id` plus a few specific fields, but a few (e.g. `analyze_fire_number`) take only
 raw inputs — check each tool's schema.
 Use **`get_financial_definitions`** when the user asks what a term means.
+
+### "how much education tax credit can I get" / "AOTC vs Lifetime Learning Credit" / "maximize my college tax credit" / "do I qualify for the American Opportunity Credit" / "should I pay tuition out of pocket or from my 529" → `analyze_education_credits`
+
+**Always CALL `analyze_education_credits` for these — do not answer from general knowledge or quote
+AOTC/LLC dollar limits or phase-out ranges from memory. When the user gives tuition/qualified-expense
+numbers and income, run it and lead with its real output (recommended credit per student, refundable
+vs non-refundable split, and the 529 carve-out).** The server is the source of truth for the
+$2,500 AOTC / $2,000 LLC caps, the 40%-refundable split, the MAGI phase-out band, the per-return LLC
+cap, and the no-double-dipping rule — never recite these from memory.
+
+Trigger condition: the user is paying qualified higher-education expenses (tuition/fees for a
+student) and wants to know which federal education credit to claim, how much they'll get, or whether
+to keep money out of the 529 to preserve the credit. Pass each student's `qualifiedExpenses` (plus
+`isUndergradFirst4Years` / `isGradOrPartTime` / `aotcYearsAlreadyClaimed` / `expensesPaidBy529` when
+known) and the household `magi` + `filingStatus` — or a `plan_id` to derive MAGI/filing status. It
+returns the recommended credit type **per student** (AOTC vs LLC vs none), the total household
+credit, the refundable (40% of AOTC) vs non-refundable split, the phase-out detail, and the
+recommended `$4,000` 529 carve-out to preserve full AOTC.
+
+Cross-link: pairs with **`analyze_529_optimization`** (the carve-out coordinates with 529
+distributions / rollover) and **`analyze_advanced_taxes`** (for MAGI and marginal-rate context that
+drives the phase-out).
 
 ## Step 6 — Present the forecast
 
