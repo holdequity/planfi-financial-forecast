@@ -1,12 +1,12 @@
 ---
 name: financial-forecast
-version: 1.2.1
+version: 1.2.2
 description: Build a complete FIRE / financial forecast for a household by orchestrating the public planfi MCP. Use whenever someone wants a financial plan, FIRE projection, retirement forecast, net-worth projection, "when can I retire", "am I on track", or wants to model savings / retirement-age / spending trade-offs — e.g. "build me a financial plan, I'm 34 making $180k with $250k invested", "when can I retire if I save $4k/mo?", "am I on track to retire at 55?".
 ---
 
 # Financial Forecast
 
-A thin orchestration layer over the **planfi MCP** (https://ai.planfi.app/mcp).
+A thin orchestration layer over the **planfi MCP** (https://ai.planfi.app/mcp/free).
 All math + the 150-year Shiller market dataset live server-side. This skill only gathers inputs
 and calls the tools — it does **not** compute anything locally. Read-only; it never changes the
 user's data.
@@ -23,10 +23,12 @@ name your environment exposes (bare or `mcp__planfi__`-prefixed); below they are
 If they're NOT available, tell the user to connect the MCP, then continue:
 
 ```
-claude mcp add --transport http planfi https://ai.planfi.app/mcp
+claude mcp add --transport http planfi https://ai.planfi.app/mcp/free
 ```
 
-(On claude.ai: add a custom connector pointing at https://ai.planfi.app/mcp.)
+> **Try free, then add your key.** The command above adds the **free** connector — `https://ai.planfi.app/mcp/free` (no key needed). Once you create an API key, add a **new** connector with the MCP url — `https://ai.planfi.app/mcp` — and authorize it with your key.
+
+(On claude.ai: add a custom connector pointing at https://ai.planfi.app/mcp/free.)
 
 > **Access — free for personal use.** The planfi MCP is free to try (a small monthly allowance, no key needed). Heavy automated abuse forced us to add limits — but it stays **free for personal use**: email **kam@rateapi.dev** and we'll send you a free API key, no charge. (Companies and commercial use have paid plans.) To use a key, pass it as an `Authorization: Bearer pft_…` header in your MCP client config.
 

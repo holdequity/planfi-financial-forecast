@@ -1,7 +1,7 @@
 {
   "name": "financial-forecast",
   "version": "1.1.0",
-  "description": "Build a complete FIRE / financial forecast: net-worth projection, FIRE age, Monte Carlo success rate, insights, action plan, and what-if scenario comparisons. Thin orchestration over the public planfi MCP (https://ai.planfi.app/mcp).",
+  "description": "Build a complete FIRE / financial forecast: net-worth projection, FIRE age, Monte Carlo success rate, insights, action plan, and what-if scenario comparisons. Thin orchestration over the public planfi MCP (https://ai.planfi.app/mcp/free).",
   "license": "MIT",
   "author": {
     "name": "holdequity",
