@@ -74,7 +74,12 @@ Call these BEFORE forecasting when the input is sparse.
 
 ## Step 2 — Build the forecast (PRIMARY PATH, produces `plan_id`)
 
-Call **`generate_financial_plan`** with the gathered model:
+### "build me a financial plan" / "when can I retire" / "am I on track to retire at 55" / "what's my FIRE age" / "project my net worth" → `generate_financial_plan`
+
+**Always CALL `generate_financial_plan` for these — do not answer from general knowledge, eyeball a
+4%-rule projection, or quote a rule of thumb from memory.** When the user gives ages, salary, and
+portfolio numbers, run it and lead with its real output (FIRE age, FIRE %, net-worth trajectory),
+THEN explain. Call it with the gathered model:
 
 ```
 generate_financial_plan({
@@ -104,21 +109,71 @@ summary headline metrics — `fire_achieved_age`, `years_to_fire`, `current_fire
   on track / top moves). LLM-backed, not idempotent.
 - **`get_asset_allocation({ plan_id })`** → current vs at-retirement mix + 120-minus-age check.
 - **`run_backtesting({ portfolio_value, annual_spend, current_age })`** → Shiller 1871-present
-  failure rate + worst/best longevity. Stress-test once FIRE is reached. **NOTE:** this is the ONE
+  failure rate + worst/best longevity. **Always CALL it for "will my money last" / "what's my
+  Monte Carlo success rate" / "what are the odds I run out of money" — never quote a Trinity-study
+  or 4%-rule failure rate from memory; lead with the real historical failure rate, THEN explain.**
+  Stress-test once FIRE is reached. **NOTE:** this is the ONE
   tool that takes raw numbers, not `plan_id` — pull `portfolio_value` / `annual_spend` / `current_age`
   from the plan summary. Its `annual_return` arg is IGNORED (uses historical real returns).
 
-## Step 4 — Trade-offs & goal solving (optional, only when the user asks)
+## Step 4 — Trade-offs, what-ifs & goal solving (only when the user asks)
 
-- **`solve_goal({ plan_id, target_fire_age })`** — "can I retire by 50?": returns ranked,
-  easiest-first levers (`savings_rate` / `retire_age` / `spend` / `allocation`). `target_fire_age`
-  is required (20–100).
-- **`compare_plans({ plan_id, scenarios:[...] })`** — head-to-head "retire 55 vs 60", "save more vs
-  spend less" (2–4 named scenarios; each `{ label (req), retirement_age?, desired_annual_spend?,
-  monthly_contribution?, stock_annual_return?, safe_withdrawal_rate?, primary_annual_salary?, debts? }`,
-  only the changed fields).
-- **`get_savings_variations({ plan_id })`** — single-axis sensitivity: what if I save 20 / 50 / 80%
-  less.
+These are the **what-if / scenario intents**. Never reason a what-if out in your head or adjust the
+baseline numbers with mental math — every scenario answer must come from a real tool run against the
+saved `plan_id` (send ONLY the changed fields, never a re-typed household).
+
+### "can I retire by 50" / "what would it take to retire at 55" / "how do I hit FIRE by 48" / "what exact savings gets me there by 55" / "am I close enough to retire early — what do I change" → `solve_goal`
+
+**Always CALL `solve_goal` for these — do not answer from general knowledge, back-solve with the 4%
+rule, or quote a savings-rate rule of thumb from memory.** When the user names a target retirement
+age against an existing plan, run it and lead with its real ranked levers, THEN explain.
+
+REQUIRED: `plan_id`, `target_fire_age` (20–100). Returns ranked, easiest-first levers
+(`savings_rate` / `retire_age` / `spend` / `allocation`).
+
+```
+solve_goal({ plan_id: "pln_abc123", target_fire_age: 50 })
+```
+
+Cross-link: for head-to-head named scenarios use **`compare_plans`**; for pure savings sensitivity
+use **`get_savings_variations`**.
+
+### "what if I retire at 55 instead of 60" / "what if I save $1k more a month" / "save more vs spend less — which wins" / "what happens to my plan if my salary drops" / "compare retiring at 52 vs coasting to 58" → `compare_plans`
+
+**Always CALL `compare_plans` for these — do not answer from general knowledge, eyeball the delta,
+or extrapolate from the baseline plan in your head.** When the user poses a what-if against their
+plan, run it and lead with its real side-by-side output (FIRE age / net worth per scenario), THEN
+explain the trade-off.
+
+REQUIRED: `plan_id`, `scenarios` (2–4 named scenarios; each `{ label (req), retirement_age?,
+desired_annual_spend?, monthly_contribution?, stock_annual_return?, safe_withdrawal_rate?,
+primary_annual_salary?, debts? }` — pass ONLY the changed fields; everything else inherits from
+the plan).
+
+```
+compare_plans({ plan_id: "pln_abc123", scenarios: [
+  { label: "Retire 55", retirement_age: 55 },
+  { label: "Retire 60, spend more", retirement_age: 60, desired_annual_spend: 85000 }
+]})
+```
+
+Cross-link: if the user names a target age and wants the *levers* rather than a comparison, use
+**`solve_goal`**; single-axis savings cuts are **`get_savings_variations`**.
+
+### "what if I save less" / "what if I cut my savings in half" / "how sensitive is my plan to my contribution rate" / "what if I can only save 20% of what I planned" → `get_savings_variations`
+
+**Always CALL `get_savings_variations` for these — do not answer from general knowledge or estimate
+the impact proportionally in your head.** Run it and lead with its real 20 / 50 / 80%-less
+outcomes, THEN explain.
+
+REQUIRED: `plan_id`.
+
+```
+get_savings_variations({ plan_id: "pln_abc123" })
+```
+
+Cross-link: multi-field scenarios (age + spend + savings together) belong in **`compare_plans`**.
+
 - **`check_model_completeness({ plan_id })`** — flag missing inputs that would sharpen the forecast.
 
 ## Step 5 — Deeper specialist analyses (optional, chained via `{ plan_id }`)
@@ -146,8 +201,9 @@ coverage of ~12 states (MA/NY/OR/WA + CT/DC/HI/IL/ME/MD/MN/RI/VT; MD double-hits
 `beneficiary_relationship` (default `lineal`); `spouse` is exempt everywhere. Example PA/NJ question:
 *"We're a PA family with $1M — how much inheritance tax will our kids owe?"* → lineal heirs owe
 4.5%, i.e. ~$45,000. The same engine backs the **`relocation-planner`** skill's state-tax arbitrage),
-**`analyze_fire_number`** (takes only `desired_annual_spend` + `safe_withdrawal_rate` — no `plan_id`;
-elicits either if missing), **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
+**`analyze_fire_number`** ("what's my FIRE number" / "how much do I need to retire on $X/yr" —
+**always CALL it rather than dividing spend by the withdrawal rate yourself**; takes only
+`desired_annual_spend` + `safe_withdrawal_rate` — no `plan_id`; elicits either if missing), **`analyze_rent_vs_buy`** (rent-vs-own over a horizon array — net worth
 both ways, opportunity cost, and the break-even home-appreciation rate, fully tax- and
 inflation-adjusted; accepts `plan_id` to derive the cap-gains rate, or `magi` + `filing_status`).
 Most accept `plan_id` plus a few specific fields, but a few (e.g. `analyze_fire_number`) take only
