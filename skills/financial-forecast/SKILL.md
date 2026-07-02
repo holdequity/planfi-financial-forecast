@@ -1,6 +1,6 @@
 ---
 name: financial-forecast
-version: 1.2.3
+version: 1.2.4
 description: Build a complete FIRE / financial forecast for a household by orchestrating the public planfi MCP. Use whenever someone wants a financial plan, FIRE projection, retirement forecast, net-worth projection, "when can I retire", "am I on track", or wants to model savings / retirement-age / spending trade-offs — e.g. "build me a financial plan, I'm 34 making $180k with $250k invested", "when can I retire if I save $4k/mo?", "am I on track to retire at 55?".
 ---
 
@@ -16,7 +16,7 @@ user's data.
 This skill uses these tools (may be namespaced, e.g. `mcp__planfi__generate_financial_plan`):
 `generate_financial_plan`, `start_plan_intake`, `get_completed_plan`, `wait_for_completion`,
 `generate_financial_insights`, `generate_action_plan`, `generate_financial_commentary`,
-`run_backtesting`, `get_asset_allocation`, `get_savings_variations`, `solve_goal`, `compare_plans`,
+`run_backtesting`, `get_asset_allocation`, `get_savings_variations`, `solve_goal`, `compare_plans`, `what_if_plan`,
 `check_model_completeness`, `explain_plan_state`, plus optional `analyze_*` deep-dives. Use whichever
 name your environment exposes (bare or `mcp__planfi__`-prefixed); below they are written bare.
 
@@ -137,6 +137,14 @@ solve_goal({ plan_id: "pln_abc123", target_fire_age: 50 })
 
 Cross-link: for head-to-head named scenarios use **`compare_plans`**; for pure savings sensitivity
 use **`get_savings_variations`**.
+
+### "what if we drop our 401k to the employer match next year" / "what if I stop maxing my 401k / IRA / HSA" / "what if I change one thing about my plan starting at age X" / "scale back contributions and spend the difference" / "single-change scenario against my saved plan" → `what_if_plan`
+
+**Always CALL `what_if_plan` for a single-change (or few-change) scenario against a saved plan — do not answer from general knowledge, do not re-send the household, and never narrate a scenario outcome the tool did not compute.** Pass the `plan_id` plus a small `changes` array of typed ops; every unchanged field is inherited from the saved plan automatically and the baseline is never mutated. The result includes a computed `scenario_summary` (baseline vs scenario final net worth, the delta, and both FIRE ages) — quote the comparison from it verbatim rather than doing arithmetic.
+
+- **REQUIRED:** `plan_id`, `changes` (1–8 typed ops). Ops: `401k_employer_match_only`, `401k_stop`, `401k_set_annual`, `ira_set_annual`, `hsa_set_annual`, `taxable_monthly_contribution`, `retirement_age`, `annual_salary`, `desired_annual_spend` — each with `earner_index` and optional `start_age` phasing where applicable ("starting next year" → `start_age` = that earner's age + 1).
+- Example (fictional): `what_if_plan({ "plan_id": "pl_fic1234567890abc", "changes": [ { "op": "401k_employer_match_only", "earner_index": 0, "start_age": 41 } ] })`
+- Cross-link: for head-to-head NAMED scenario comparisons (2–4 full variants) use **`compare_plans`**; for "hit a target age" solving use **`solve_goal`**; for pure contribution-rate sensitivity sweeps use **`get_savings_variations`**.
 
 ### "what if I retire at 55 instead of 60" / "what if I save $1k more a month" / "save more vs spend less — which wins" / "what happens to my plan if my salary drops" / "compare retiring at 52 vs coasting to 58" → `compare_plans`
 
